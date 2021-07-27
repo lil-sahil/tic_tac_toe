@@ -14,6 +14,10 @@ const gameBoard = (() => {
     const setGameArray = () => {
         gameArray = ['','','','','','','','',''];
     }
+
+    const getCurrentGameArray = () => {
+        return gameArray;
+    }
     
 
     // Place marker
@@ -35,7 +39,7 @@ const gameBoard = (() => {
     };
 
 
-    return { placemarker , setGameArray, displayMarkers};
+    return { placemarker , setGameArray, displayMarkers, getCurrentGameArray};
 
 })();
 
@@ -56,12 +60,15 @@ const gameController = (() => {
 
     boxes.forEach(box => {
         box.addEventListener('click', (e) => {
+
+            // Player Pick
             let index = parseInt((e.target.id).split('-')[1]);
             gameBoard.placemarker(index, playerX.getMarker());
+
+            // Computer Pick
+            gameBoard.placemarker(aiController.randomPlay(),playerO.getMarker());
         });
     });
-    
-
 
 
 })();
@@ -71,8 +78,26 @@ const resetButton = (() => {
     const resetButton = document.querySelector('.reset-button');
 
     resetButton.addEventListener('click', () => {
-        gameBoard.setGameArray()
+        gameBoard.setGameArray();
         gameBoard.displayMarkers();
-    })
+    });
 
+})();
+
+// AI Controller
+
+const aiController = (() => {
+    
+    // Pick the first availaible spot
+    const randomPlay = () => {
+        console.log(gameBoard.getCurrentGameArray());
+        
+        for (let [index, el] of gameBoard.getCurrentGameArray().entries()){
+            if (el === ""){
+                return index;
+            };
+        };   
+    };
+
+    return {randomPlay}
 })();
