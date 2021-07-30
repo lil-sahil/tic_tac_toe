@@ -5,7 +5,7 @@ const createPlayer = (marker) => {
 }
 
 
-// Gameboard Module
+// Gameboard Module and Modal display
 const gameBoard = (() => {
     const boxes = document.querySelectorAll('.box');
 
@@ -38,8 +38,23 @@ const gameBoard = (() => {
         } 
     };
 
+    const displayWinner = (message) => {
+        const modal = document.querySelector('.modal');
+        const winner = document.querySelector('.modal .winner')
+        const outsideClick = document.querySelector('.modal');
 
-    return { placemarker , setGameArray, displayMarkers, getCurrentGameArray};
+        modal.style.display = 'flex';
+        winner.innerHTML = `${message}`;
+
+        outsideClick.addEventListener('click', e => {
+            modal.style.display = 'none';
+            gameController.resetGame();
+
+        })
+    }
+
+
+    return { placemarker , setGameArray, displayMarkers, getCurrentGameArray, displayWinner};
 
 })();
 
@@ -64,25 +79,78 @@ const gameController = (() => {
             // Player Pick
             let index = parseInt((e.target.id).split('-')[1]);
             gameBoard.placemarker(index, playerX.getMarker());
+            pickNumber += 1;
+
+            checkWinner(playerX.getMarker());
 
             // Computer Pick
             gameBoard.placemarker(aiController.randomPlay(),playerO.getMarker());
+            checkWinner(playerO.getMarker());
+            pickNumber += 1;
         });
     });
 
+    // Determine if someone has won a game
 
-})();
+    const checkWinner = (marker) => {
 
-// Reset Game
-const resetButton = (() => {
-    const resetButton = document.querySelector('.reset-button');
+        let currentArray = gameBoard.getCurrentGameArray();
 
-    resetButton.addEventListener('click', () => {
+        let markerArray = [];
+
+        // Winning Conditions
+        let conditions = [
+            [`${marker}`,`${marker}`,`${marker}`,'','','','','',''].join(),
+            [`${marker}`,'','',`${marker}`,'','',`${marker}`,'',''].join(),
+            [`${marker}`,'','','',`${marker}`,'','','',`${marker}`].join(),
+            ['','',`${marker}`,'','',`${marker}`,'','',`${marker}`].join(),
+            ['','','','','','',`${marker}`,`${marker}`,`${marker}`].join(),
+            ['','',`${marker}`,'',`${marker}`,'',`${marker}`,'',''].join(),
+        ]
+
+        for (let i = 0; i < currentArray.length; i++){
+            if (currentArray[i] !== marker){
+                markerArray.push('');
+            }else {
+                markerArray.push(`${marker}`);
+            };
+        };
+
+        for (let i = 0; i < conditions.length; i++){
+            
+            if (markerArray.join() === conditions[i]){
+                console.log(`Winner ${marker}`);
+                gameBoard.displayWinner(`Winner ${marker}`);
+
+            };
+        };
+
+    };
+
+    // Reset Game
+
+    const resetGame = () => {
         gameBoard.setGameArray();
         gameBoard.displayMarkers();
-    });
+    }
 
+    const resetButton = document.querySelector('.reset-button');
+    resetButton.addEventListener('click', resetGame);
+
+
+    return { resetGame }
 })();
+
+// // Reset Game
+// const resetButton = (() => {
+//     const resetButton = document.querySelector('.reset-button');
+
+//     resetButton.addEventListener('click', () => {
+//         gameBoard.setGameArray();
+//         gameBoard.displayMarkers();
+//     });
+
+// })();
 
 // AI Controller
 
