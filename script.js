@@ -116,6 +116,8 @@ const gameController = (() => {
             };
         };
 
+        console.log(markerArray);
+
         for (let i = 0; i < conditions.length; i++){
             
             if (markerArray.join() === conditions[i]){
@@ -141,16 +143,6 @@ const gameController = (() => {
     return { resetGame }
 })();
 
-// // Reset Game
-// const resetButton = (() => {
-//     const resetButton = document.querySelector('.reset-button');
-
-//     resetButton.addEventListener('click', () => {
-//         gameBoard.setGameArray();
-//         gameBoard.displayMarkers();
-//     });
-
-// })();
 
 // AI Controller
 
@@ -158,7 +150,6 @@ const aiController = (() => {
     
     // Pick the first availaible spot
     const randomPlay = () => {
-        console.log(gameBoard.getCurrentGameArray());
         
         for (let [index, el] of gameBoard.getCurrentGameArray().entries()){
             if (el === ""){
