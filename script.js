@@ -73,29 +73,36 @@ const gameController = (() => {
     // Get gameboard elements
     const boxes = document.querySelectorAll('.box');
 
+
     boxes.forEach(box => {
         box.addEventListener('click', (e) => {
-
+            
             // Player Pick
             let index = parseInt((e.target.id).split('-')[1]);
-            gameBoard.placemarker(index, playerX.getMarker());
-            pickNumber += 1;
 
-            checkWinner(playerX.getMarker());
-
-            // Computer Pick
-            gameBoard.placemarker(aiController.randomPlay(),playerO.getMarker());
-
-            if (checkWinner(playerX.getMarker()) !== true){
-                checkWinner(playerO.getMarker());
+            // Prevent from clicking twice vy looking at the index already used
+            if (gameBoard.getCurrentGameArray()[index] === ""){
+                
+                gameBoard.placemarker(index, playerX.getMarker());
                 pickNumber += 1;
+
+                checkWinner(playerX.getMarker());
+
+                // Computer Pick
+                gameBoard.placemarker(aiController.randomPlay(),playerO.getMarker());
+
+                if (checkWinner(playerX.getMarker()) !== true){
+                    checkWinner(playerO.getMarker());
+                    pickNumber += 1;
+                };
+
+                console.log(pickNumber);
+
+                if ( (pickNumber === 10) && (checkWinner(playerX.getMarker()) !== true) && (checkWinner(playerO.getMarker()) !== true) ){
+                    gameBoard.displayWinner("Tie");
+                };                
             };
 
-            console.log(pickNumber);
-
-            if ( (pickNumber === 10) && (checkWinner(playerX.getMarker()) !== true) && (checkWinner(playerO.getMarker()) !== true) ){
-                gameBoard.displayWinner("Tie");
-            };   
         });
     });
 
