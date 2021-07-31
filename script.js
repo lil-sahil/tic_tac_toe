@@ -89,18 +89,22 @@ const gameController = (() => {
                 checkWinner(playerX.getMarker());
 
                 // Computer Pick
-                gameBoard.placemarker(aiController.randomPlay(),playerO.getMarker());
 
-                if (checkWinner(playerX.getMarker()) !== true){
-                    checkWinner(playerO.getMarker());
-                    pickNumber += 1;
-                };
+                // Prevent this section of the code from running if there are no more spots left in the grid
+                
+                if ( (pickNumber < 9) ){
+                    gameBoard.placemarker(aiController.randomPlay(),playerO.getMarker());
+                    
+                    if (checkWinner(playerX.getMarker()) !== true){
+                        checkWinner(playerO.getMarker());
+                        pickNumber += 1;
+                    };
+                }
 
-                console.log(pickNumber);
-
-                if ( (pickNumber === 10) && (checkWinner(playerX.getMarker()) !== true) && (checkWinner(playerO.getMarker()) !== true) ){
+                if ( (pickNumber === 9) && (checkWinner(playerX.getMarker()) !== true) && (checkWinner(playerO.getMarker()) !== true) ){
                     gameBoard.displayWinner("Tie");
                 };                
+
             };
 
         });
@@ -164,7 +168,7 @@ const gameController = (() => {
 const aiController = (() => {
     
     // Pick the first availaible spot
-    const randomPlay = () => {
+    const firstSpotPlay = () => {
         
         for (let [index, el] of gameBoard.getCurrentGameArray().entries()){
             if (el === ""){
@@ -173,5 +177,22 @@ const aiController = (() => {
         };   
     };
 
-    return {randomPlay}
+    // AI Random Play
+    const randomPlay = () => {
+        let currentArray = gameBoard.getCurrentGameArray();
+
+        let flag = true;
+
+        while (true){
+            let index = Math.floor(Math.random()*currentArray.length)
+
+            if (currentArray[index] === ""){
+                return index;
+            };
+        };
+
+        
+    }
+
+    return {firstSpotPlay, randomPlay }
 })();
