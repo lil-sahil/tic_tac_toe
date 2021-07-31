@@ -69,16 +69,33 @@ const gameController = (() => {
 
     // Round Logic
     let pickNumber = 0;
+    let aiDifficulty = "";
 
     // Get gameboard elements
     const boxes = document.querySelectorAll('.box');
+
+    // Get AI difficulty
+    const getDifficulty = () => {
+        const selection = document.querySelector("select");
+        return selection.options[selection.selectedIndex].value;
+    }
+
+    
 
 
     boxes.forEach(box => {
         box.addEventListener('click', (e) => {
             
+            // Set AI diffculty only when at the begining of the game.
+            if (pickNumber === 0){
+                aiDifficulty = getDifficulty();
+            }
+            
+            
             // Player Pick
             let index = parseInt((e.target.id).split('-')[1]);
+
+
 
             // Prevent from clicking twice vy looking at the index already used
             if (gameBoard.getCurrentGameArray()[index] === ""){
@@ -93,7 +110,7 @@ const gameController = (() => {
                 // Prevent this section of the code from running if there are no more spots left in the grid
                 
                 if ( (pickNumber < 9) ){
-                    gameBoard.placemarker(aiController.randomPlay(),playerO.getMarker());
+                    gameBoard.placemarker(aiController[`${aiDifficulty}`](),playerO.getMarker());
                     
                     if (checkWinner(playerX.getMarker()) !== true){
                         checkWinner(playerO.getMarker());
@@ -194,5 +211,5 @@ const aiController = (() => {
         
     }
 
-    return {firstSpotPlay, randomPlay }
+    return { "easy": firstSpotPlay, "medium": randomPlay }
 })();
