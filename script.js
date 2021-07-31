@@ -50,8 +50,8 @@ const gameBoard = (() => {
             modal.style.display = 'none';
             gameController.resetGame();
 
-        })
-    }
+        });
+    };
 
 
     return { placemarker , setGameArray, displayMarkers, getCurrentGameArray, displayWinner};
@@ -68,7 +68,7 @@ const gameController = (() => {
     const playerO = createPlayer('O');
 
     // Round Logic
-    let pickNumber = 1;
+    let pickNumber = 0;
 
     // Get gameboard elements
     const boxes = document.querySelectorAll('.box');
@@ -85,8 +85,17 @@ const gameController = (() => {
 
             // Computer Pick
             gameBoard.placemarker(aiController.randomPlay(),playerO.getMarker());
-            checkWinner(playerO.getMarker());
-            pickNumber += 1;
+
+            if (checkWinner(playerX.getMarker()) !== true){
+                checkWinner(playerO.getMarker());
+                pickNumber += 1;
+            };
+
+            console.log(pickNumber);
+
+            if ( (pickNumber === 10) && (checkWinner(playerX.getMarker()) !== true) && (checkWinner(playerO.getMarker()) !== true) ){
+                gameBoard.displayWinner("Tie");
+            };   
         });
     });
 
@@ -95,37 +104,35 @@ const gameController = (() => {
     const checkWinner = (marker) => {
 
         let currentArray = gameBoard.getCurrentGameArray();
+        let flag = 0;
 
-        let markerArray = [];
+        // let markerArray = [];
 
         // Winning Conditions
         let conditions = [
-            [`${marker}`,`${marker}`,`${marker}`,'','','','','',''].join(),
-            [`${marker}`,'','',`${marker}`,'','',`${marker}`,'',''].join(),
-            [`${marker}`,'','','',`${marker}`,'','','',`${marker}`].join(),
-            ['','',`${marker}`,'','',`${marker}`,'','',`${marker}`].join(),
-            ['','','','','','',`${marker}`,`${marker}`,`${marker}`].join(),
-            ['','',`${marker}`,'',`${marker}`,'',`${marker}`,'',''].join(),
+            [1,2,3],
+            [1,4,7],
+            [1,5,9],
+            [3,6,9],
+            [7,8,9],
+            [3,5,7],
+            [2,5,8]
         ]
 
-        for (let i = 0; i < currentArray.length; i++){
-            if (currentArray[i] !== marker){
-                markerArray.push('');
-            }else {
-                markerArray.push(`${marker}`);
-            };
-        };
-
-        console.log(markerArray);
-
         for (let i = 0; i < conditions.length; i++){
-            
-            if (markerArray.join() === conditions[i]){
-                console.log(`Winner ${marker}`);
+            for (let j = 0; j < conditions[i].length; j++){
+                if ( currentArray[ ( conditions[i][j] ) - 1 ] === marker){
+                    flag += 1;
+                };
+            };
+            if (flag === 3){
                 gameBoard.displayWinner(`Winner ${marker}`);
-
+                return true;
+            } else {
+                flag = 0;
             };
         };
+
 
     };
 
@@ -134,6 +141,7 @@ const gameController = (() => {
     const resetGame = () => {
         gameBoard.setGameArray();
         gameBoard.displayMarkers();
+        pickNumber = 0;
     }
 
     const resetButton = document.querySelector('.reset-button');
