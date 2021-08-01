@@ -115,7 +115,7 @@ const gameController = (() => {
                     if (checkWinner(playerX.getMarker()) !== true){
                         checkWinner(playerO.getMarker(),true);
                         pickNumber += 1;
-                    };,
+                    };
                 }
 
                 if ( (pickNumber === 9) && (checkWinner(playerX.getMarker()) !== true) && (checkWinner(playerO.getMarker()) !== true) ){
@@ -162,7 +162,6 @@ const gameController = (() => {
                 flag = 0;
             };
         };
-
 
     };
 
@@ -217,49 +216,108 @@ const aiController = (() => {
     const smartPlay = () => {
         // Get current game array and set to currentArray
         let currentArray = gameBoard.getCurrentGameArray();
-
-
         
-        const miniMax = (array, depth, marker) => {
+        const bestIndex = () => {
+            let bestScore = -Infinity;
+            let bestIndex;
+            for (let i = 0; i < currentArray.length; i++){
+                if (currentArray[i] === ""){
+                    currentArray[i] = 'O';
+                    
+                    if (miniMax(currentArray, 3, true) > bestScore){
+                        
+                        bestIndex = i;
+                    }
+                    currentArray[i] = "";
+                }
+                
+            }
+            console.log(bestIndex);
+            return bestIndex;
+        }
+        
+        
+        const miniMax = (array, depth, ismaximizing) => {
+            
+            let marker = '';
+
+            if (ismaximizing === true){
+                marker = 'O';
+            }else {
+                marker = 'X';
+            };
+            
             // base conditions
-            // If a winner is found
-            if (gameBoard.checkWinner(marker, display=false, array)){
+            // If the maximizing player is the winner.
+            
+            if ( gameController.checkWinner(marker, display=false, array) ){      
                 return 1;
             }
 
-            // If a loser is found
-            else if (gameBoard.checkWinner(marker, display = false, array) === false){
+            // If the minimizing player is the winner
+            else if (gameController.checkWinner("X", display = false, array)){
                 return -1;
             }
 
             // if a tie is found
-            else if (array.filter("").length === 0){
+            else if (array.filter(word => word === "").length === 0){
                 return 0;
             }
 
+            // else if (depth === 0){
+            //     console.log("here");
+            //     return 0;
+            // }
+
             // Loop through the currentArray and determine where the move can be made.
 
-            for (let i = 0; i < array.length; i++){
-                if (array[i] === ""){
-                    array[i] = marker;
+            
+            if (ismaximizing){
+                
+                let maxEval = -Infinity;
+                
+                for (let i = 0; i < array.length; i++){
+                    if (array[i] === ""){
+                        array[i] = marker;
+
+                        
+                        let eval = miniMax(array, depth - 1, false);
+
+                        maxEval = Math.max(maxEval, eval);
+
+                        array[i] = '';
+                        
+                    };
                 };
 
-                if (marker === 'O'){
-                    miniMax(array, depth += 1, gameController.playerX.getMarker());
-                }else {
-                    miniMax(array, depth += 1, gameController.playerX.getMarker());
-                }
-            };
-        
-
+                return maxEval;
             
+            }else{
+                let minEval = Infinity;
+
+                for (let i = 0; i < array.length; i++){
+                    if (array[i] === ""){
+                        array[i] = marker;
+
+                        let eval = miniMax(array, depth - 1, true);
+                        minEval = Math.min(minEval, eval);
+                        array[i] = '';
+                        
+                    };
+                    
+                };
+                return minEval;
+            };
             
         };
 
-        miniMax(currentArray, depth = 0, gameController.playerO.getMarker());
-
-
+        return bestIndex();
     };
 
     return { "easy": firstSpotPlay, "medium": randomPlay, "hard": smartPlay }
 })();
+
+
+// let data = {2:3, 4:5}
+
+// console.log(Math.max(data));
