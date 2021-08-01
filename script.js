@@ -103,7 +103,7 @@ const gameController = (() => {
                 gameBoard.placemarker(index, playerX.getMarker());
                 pickNumber += 1;
 
-                checkWinner(playerX.getMarker());
+                checkWinner(playerX.getMarker(), true);
 
                 // Computer Pick
 
@@ -113,9 +113,9 @@ const gameController = (() => {
                     gameBoard.placemarker(aiController[`${aiDifficulty}`](),playerO.getMarker());
                     
                     if (checkWinner(playerX.getMarker()) !== true){
-                        checkWinner(playerO.getMarker());
+                        checkWinner(playerO.getMarker(),true);
                         pickNumber += 1;
-                    };
+                    };,
                 }
 
                 if ( (pickNumber === 9) && (checkWinner(playerX.getMarker()) !== true) && (checkWinner(playerO.getMarker()) !== true) ){
@@ -129,9 +129,9 @@ const gameController = (() => {
 
     // Determine if someone has won a game
 
-    const checkWinner = (marker) => {
+    const checkWinner = (marker, display, currentArray = gameBoard.getCurrentGameArray()) => {
 
-        let currentArray = gameBoard.getCurrentGameArray();
+        
         let flag = 0;
 
         // let markerArray = [];
@@ -154,7 +154,9 @@ const gameController = (() => {
                 };
             };
             if (flag === 3){
-                gameBoard.displayWinner(`Winner ${marker}`);
+                if (display === true){
+                    gameBoard.displayWinner(`Winner ${marker}`);
+                }
                 return true;
             } else {
                 flag = 0;
@@ -176,7 +178,7 @@ const gameController = (() => {
     resetButton.addEventListener('click', resetGame);
 
 
-    return { resetGame }
+    return { resetGame, checkWinner, playerO, playerX }
 })();
 
 
@@ -209,7 +211,55 @@ const aiController = (() => {
         };
 
         
-    }
+    };
 
-    return { "easy": firstSpotPlay, "medium": randomPlay }
+    // AI Minimax Algorithim
+    const smartPlay = () => {
+        // Get current game array and set to currentArray
+        let currentArray = gameBoard.getCurrentGameArray();
+
+
+        
+        const miniMax = (array, depth, marker) => {
+            // base conditions
+            // If a winner is found
+            if (gameBoard.checkWinner(marker, display=false, array)){
+                return 1;
+            }
+
+            // If a loser is found
+            else if (gameBoard.checkWinner(marker, display = false, array) === false){
+                return -1;
+            }
+
+            // if a tie is found
+            else if (array.filter("").length === 0){
+                return 0;
+            }
+
+            // Loop through the currentArray and determine where the move can be made.
+
+            for (let i = 0; i < array.length; i++){
+                if (array[i] === ""){
+                    array[i] = marker;
+                };
+
+                if (marker === 'O'){
+                    miniMax(array, depth += 1, gameController.playerX.getMarker());
+                }else {
+                    miniMax(array, depth += 1, gameController.playerX.getMarker());
+                }
+            };
+        
+
+            
+            
+        };
+
+        miniMax(currentArray, depth = 0, gameController.playerO.getMarker());
+
+
+    };
+
+    return { "easy": firstSpotPlay, "medium": randomPlay, "hard": smartPlay }
 })();
