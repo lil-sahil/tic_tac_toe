@@ -109,14 +109,13 @@ const gameController = (() => {
 
                 // Prevent this section of the code from running if there are no more spots left in the grid
                 
-                if ( (pickNumber < 9) ){
-                    gameBoard.placemarker(aiController[`${aiDifficulty}`](),playerO.getMarker());
+                if ( (pickNumber < 9) && (checkWinner(playerX.getMarker(), display = false) !== true) ){
                     
-                    if (checkWinner(playerX.getMarker()) !== true){
-                        checkWinner(playerO.getMarker(),true);
-                        pickNumber += 1;
-                    };
-                }
+                    gameBoard.placemarker(aiController[`${aiDifficulty}`](),playerO.getMarker());
+                    checkWinner(playerO.getMarker(),true);
+                    pickNumber += 1;
+                    
+                };
 
                 if ( (pickNumber === 9) && (checkWinner(playerX.getMarker()) !== true) && (checkWinner(playerO.getMarker()) !== true) ){
                     gameBoard.displayWinner("Tie");
@@ -144,7 +143,8 @@ const gameController = (() => {
             [3,6,9],
             [7,8,9],
             [3,5,7],
-            [2,5,8]
+            [2,5,8],
+            [4,5,6]
         ]
 
         for (let i = 0; i < conditions.length; i++){
@@ -217,22 +217,25 @@ const aiController = (() => {
         // Get current game array and set to currentArray
         let currentArray = gameBoard.getCurrentGameArray();
         
+        
         const bestIndex = () => {
             let bestScore = -Infinity;
             let bestIndex;
+            
             for (let i = 0; i < currentArray.length; i++){
                 if (currentArray[i] === ""){
                     currentArray[i] = 'O';
-                    
-                    if (miniMax(currentArray, 3, true) > bestScore){
-                        
-                        bestIndex = i;
-                    }
+                    let score = miniMax(currentArray, 3, false); 
+                    // console.log(`${i}:${score}`);
                     currentArray[i] = "";
-                }
+                    if (score > bestScore){
+                        bestScore = score;
+                        bestIndex = i;
+                    };
+                };
                 
-            }
-            console.log(bestIndex);
+            };
+            // console.log(bestIndex);
             return bestIndex;
         }
         
@@ -250,12 +253,14 @@ const aiController = (() => {
             // base conditions
             // If the maximizing player is the winner.
             
-            if ( gameController.checkWinner(marker, display=false, array) ){      
+            if ( gameController.checkWinner("O", display=false, array) === true ){     
                 return 1;
             }
 
+           
+
             // If the minimizing player is the winner
-            else if (gameController.checkWinner("X", display = false, array)){
+            else if (gameController.checkWinner("X", display = false, array) === true){
                 return -1;
             }
 
@@ -263,11 +268,6 @@ const aiController = (() => {
             else if (array.filter(word => word === "").length === 0){
                 return 0;
             }
-
-            // else if (depth === 0){
-            //     console.log("here");
-            //     return 0;
-            // }
 
             // Loop through the currentArray and determine where the move can be made.
 
@@ -279,14 +279,10 @@ const aiController = (() => {
                 for (let i = 0; i < array.length; i++){
                     if (array[i] === ""){
                         array[i] = marker;
-
                         
                         let eval = miniMax(array, depth - 1, false);
-
+                        array[i] = "";
                         maxEval = Math.max(maxEval, eval);
-
-                        array[i] = '';
-                        
                     };
                 };
 
@@ -300,8 +296,8 @@ const aiController = (() => {
                         array[i] = marker;
 
                         let eval = miniMax(array, depth - 1, true);
+                        array[i] = "";
                         minEval = Math.min(minEval, eval);
-                        array[i] = '';
                         
                     };
                     
@@ -316,8 +312,3 @@ const aiController = (() => {
 
     return { "easy": firstSpotPlay, "medium": randomPlay, "hard": smartPlay }
 })();
-
-
-// let data = {2:3, 4:5}
-
-// console.log(Math.max(data));
