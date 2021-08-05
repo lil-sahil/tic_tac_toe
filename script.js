@@ -40,13 +40,12 @@ const gameBoard = (() => {
 
     const displayWinner = (message) => {
         const modal = document.querySelector('.modal');
-        const winner = document.querySelector('.modal .winner')
-        const outsideClick = document.querySelector('.modal');
+        const winner = document.querySelector('.modal .winner');
 
         modal.style.display = 'flex';
         winner.innerHTML = `${message}`;
 
-        outsideClick.addEventListener('click', e => {
+        modal.addEventListener('click', e => {
             modal.style.display = 'none';
             gameController.resetGame();
 
@@ -118,7 +117,7 @@ const gameController = (() => {
                 };
 
                 if ( (pickNumber === 9) && (checkWinner(playerX.getMarker()) !== true) && (checkWinner(playerO.getMarker()) !== true) ){
-                    gameBoard.displayWinner("Tie");
+                    gameBoard.displayWinner("Not Great, Not terrible. You Tied.");
                 };                
 
             };
@@ -155,7 +154,16 @@ const gameController = (() => {
             };
             if (flag === 3){
                 if (display === true){
-                    gameBoard.displayWinner(`Winner ${marker}`);
+                    // If marker is X (user)
+                    switch (marker){
+                        case 'X':
+                            gameBoard.displayWinner(`Great Job! You Win!`);
+                            break;
+                        
+                        case 'O':
+                            gameBoard.displayWinner(`Oh No! You Lost :(`);
+                            break;
+                    }
                 }
                 return true;
             } else {

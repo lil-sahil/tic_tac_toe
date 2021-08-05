@@ -1,7 +1,14 @@
+/* Marker Font */
+@import url('https://fonts.googleapis.com/css2?family=Palette+Mosaic&display=swap');
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+}
+
+body {
+    background-color:  #0e62c2;
 }
 
 .container  {
@@ -14,11 +21,33 @@
     justify-content: space-between;
 }
 
+
+/* Title */
 .title {
-    background-color: black;
+    margin-top: 70px;
+    background-color: #0e62c2;
+    color: #fff;
+    font-size: 2rem;
+    border-bottom: #fff 2px solid;
+}
+
+
+/* Difficulty Options selections */
+.select-AI {
+    margin: 70px 0px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.select-AI p {
+    margin-right: 1rem;
+    font-weight: 800;
     color: #fff;
 }
 
+
+/* Gameboard */
 .gameboard {
     margin: 0 auto;
     display: grid;
@@ -29,15 +58,42 @@
 }
 
 #index-0, #index-1, #index-2, #index-3, #index-4, #index-5 {
-    border-bottom: 1px red solid;
+    border-bottom: 4px #fff solid;
 }
 
 #index-0, #index-1, #index-3, #index-4, #index-6, #index-7{
-    border-right: 1px red solid;
+    border-right: 4px #fff solid;
+}
+
+
+/* Marker Style */
+.box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-family: 'Palette Mosaic', cursive;
+
 }
 
 .box:hover{
-    background-color: red;
+    background-color: #fff;
+}
+
+
+/* Reset Button */
+.reset-button {
+    margin: 70px auto 0 auto;
+    background-color: white;
+    width: 70px;
+    border-radius: 6px;
+    padding: 10px;
+}
+
+.reset-button:hover {
+    cursor: pointer;
+    font-weight: bold;
+    color: red;
 }
 
 
@@ -56,11 +112,12 @@
 }
 
 .modal .modal-container{
+    padding: 1rem;
     height: 60px;
-    width: 200px;
     background-color: #fff;
     display: flex;
     justify-content: center;
     align-items: center;
+    border-radius: 6px;
 }
 
